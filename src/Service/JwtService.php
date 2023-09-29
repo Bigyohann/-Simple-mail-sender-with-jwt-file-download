@@ -20,7 +20,7 @@ class JwtService
     {
          try{
              return JWT::decode($token, new Key($this->key, 'HS256'));
-         } catch (\Exception){
+         } catch (\Exception $exception){
              return null;
          }
     }

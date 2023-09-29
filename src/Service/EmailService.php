@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use DateInterval;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
@@ -26,12 +27,17 @@ class EmailService
     public function sendMail(string $to)
     {
         $email = (new Email())
-            ->to('you@example.com')
+            ->to($to)
             ->subject('Time for Symfony Mailer!')
             ->html($this->twig->render('email/downloadFile.html.twig',
                 [
                     'url' => $this->urlGenerator->generate('app_download', [], UrlGeneratorInterface::ABSOLUTE_URL),
-                    'token' => $this->jwtService->encode(['to' => $to])
+                    'token' => $this->jwtService->encode(
+                        [
+                            'to' => $to,
+                            'exp' => (new \DateTime())->add(DateInterval::createFromDateString('2592000 seconds'))->getTimestamp()
+                        ]
+                    )
                 ]
             ));
 
